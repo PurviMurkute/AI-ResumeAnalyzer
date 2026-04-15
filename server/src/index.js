@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import authRouter from "./routes/authRoutes.js";
 import connDB from "./config/dbConnect.js";
+import analyzeResumeRouter from "./routes/resumeRoutes.js";
 
 dotenv.config();
 
@@ -9,6 +10,7 @@ connDB();
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 5001;
 
@@ -17,6 +19,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/resume", analyzeResumeRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

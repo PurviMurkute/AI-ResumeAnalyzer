@@ -22,7 +22,7 @@ const registerUser = async (req, res) => {
       });
     }
 
-    if (
+    if ( 
       !validator.isStrongPassword(password, {
         minLength: 6,
         minLowercase: 1,
