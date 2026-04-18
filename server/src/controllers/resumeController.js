@@ -27,6 +27,7 @@ const generateWithRetry = async (prompt, retries = 3) => {
 };
 
 const analyzeResume = async (req, res) => {
+  const {jobDescription} = req.body;
   try {
     const file = req.file;
 
@@ -37,9 +38,7 @@ const analyzeResume = async (req, res) => {
       });
     }
 
-    console.log("Local file path:", file.path);
-
-    // ☁️ Upload to Cloudinary
+    // Upload to Cloudinary
     const cloudinaryUrl = await fileUploadOnCloudinary(file.path);
 
     if (!cloudinaryUrl) {
@@ -49,30 +48,35 @@ const analyzeResume = async (req, res) => {
       });
     }
 
-    console.log("Cloudinary URL:", cloudinaryUrl);
-
-    // 📄 Extract text from PDF
+    // Extract text from PDF
     const resumeText = await extractTextFromPDF(file.path);
 
-    // 🧹 delete local file after use
+    // delete local file after use
     fs.unlinkSync(file.path);
 
-    // 🤖 Better Prompt
+    // Prompt
     const prompt = `
-You are an ATS system.
+You are an ATS (Applicant Tracking System) used by recruiters.
 
-Analyze the resume and return ONLY this JSON:
+Task:
+Analyze the resume based on the most relevant role inferred from the resume content.
+If a job description is provided, prioritize matching the resume against it.
 
+Return ONLY valid JSON in this format:
 {
   "ats_score": number (0-10),
-  "suggestions": ["max 3 short points"]
+  "suggestions": ["max 3 short actionable points"]
+  "strengths": ["max 3 short points about resume strengths"]
+  "weaknesses": ["max 3 short points about resume weaknesses"]
 }
 
 Rules:
-- ats_score must be between 0 and 10
+- ats_score must be an integer between 0 and 10
 - suggestions must be short (1 line each)
-- maximum 3 suggestions only
-- DO NOT return anything except JSON
+- maximum 3 suggestions
+- no extra text, no explanation
+
+${req.body.jobDescription ? `Job Description:\n${req.body.jobDescription}` : ""}
 
 Resume:
 ${resumeText}
@@ -80,7 +84,7 @@ ${resumeText}
 
     const analysis = await generateWithRetry(prompt);
 
-    // optional JSON parsing
+    // JSON parsing
     let cleaned = analysis
       .replace(/```json/g, "")
       .replace(/```/g, "")
@@ -96,7 +100,7 @@ ${resumeText}
 
     const analyzeResumeDoc = new AnalyzeResume({
       resume: cloudinaryUrl,
-      jobDescription: req.body.jobDescription,
+      jobDescription: jobDescription,
       analysisResult: JSON.stringify(parsed),
       score: parsed.ats_score,
     });
