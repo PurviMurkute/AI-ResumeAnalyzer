@@ -8,7 +8,6 @@ const analyzeResumeSchema = new Schema(
     },
     jobDescription: {
       type: String,
-      required: true,
     },
     analysisResult: {
       type: String,
@@ -16,7 +15,6 @@ const analyzeResumeSchema = new Schema(
     },
     score: {
       type: Number,
-      required: true,
     },
   },
   {
