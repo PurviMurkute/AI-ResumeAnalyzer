@@ -1,7 +1,12 @@
-import React from "react";
+import { Route, Routes } from "react-router";
+import Home from "./views/Home";
 
 const App = () => {
-  return <div className="text-center">AI Resume Analyzer</div>;
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+    </Routes>
+  );
 };
 
 export default App;

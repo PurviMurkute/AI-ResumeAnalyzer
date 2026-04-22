@@ -27,7 +27,7 @@ const generateWithRetry = async (prompt, retries = 3) => {
 };
 
 const analyzeResume = async (req, res) => {
-  const {jobDescription} = req.body;
+  const { jobDescription } = req.body;
   try {
     const file = req.file;
 
@@ -60,23 +60,43 @@ You are an ATS (Applicant Tracking System) used by recruiters.
 
 Task:
 Analyze the resume based on the most relevant role inferred from the resume content.
-If a job description is provided, prioritize matching the resume against it.
+
+${
+  jobDescription
+    ? "Also compare the resume with the job description and identify missing important keywords."
+    : "Also extract important keywords from the resume."
+}
 
 Return ONLY valid JSON in this format:
-{
+
+${
+  jobDescription
+    ? `{
   "ats_score": number (0-10),
-  "suggestions": ["max 3 short actionable points"]
-  "strengths": ["max 3 short points about resume strengths"]
-  "weaknesses": ["max 3 short points about resume weaknesses"]
+  "score_type": "job_match",
+  "suggestions": ["max 3 short actionable points"],
+  "strengths": ["max 3 short points"],
+  "weaknesses": ["max 3 short points"],
+  "missing_keywords": ["max 5 important technical keywords"]
+}`
+    : `{
+  "ats_score": number (0-10),
+  "score_type": "general",
+  "suggestions": ["max 3 short actionable points"],
+  "strengths": ["max 3 short points"],
+  "weaknesses": ["max 3 short points"],
+  "extracted_keywords": ["max 5 important technical keywords"]
+}`
 }
 
 Rules:
 - ats_score must be an integer between 0 and 10
 - suggestions must be short (1 line each)
-- maximum 3 suggestions
+- strengths & weaknesses must be concise
+- keywords must be technical skills/tools only
 - no extra text, no explanation
 
-${req.body.jobDescription ? `Job Description:\n${req.body.jobDescription}` : ""}
+${jobDescription ? `Job Description:\n${jobDescription}` : ""}
 
 Resume:
 ${resumeText}
