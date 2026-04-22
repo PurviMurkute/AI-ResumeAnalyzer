@@ -10,7 +10,7 @@ const analyzeResumeSchema = new Schema(
       type: String,
     },
     analysisResult: {
-      type: String,
+      type: Object,
       required: true,
     },
     score: {

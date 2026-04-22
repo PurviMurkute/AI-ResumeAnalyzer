@@ -101,7 +101,7 @@ ${resumeText}
     const analyzeResumeDoc = new AnalyzeResume({
       resume: cloudinaryUrl,
       jobDescription: jobDescription,
-      analysisResult: JSON.stringify(parsed),
+      analysisResult: parsed,
       score: parsed.ats_score,
     });
 
