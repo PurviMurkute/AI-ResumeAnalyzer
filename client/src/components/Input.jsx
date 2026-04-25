@@ -1,13 +1,44 @@
-const Input = ({ type, placeholder, className, value, onChange, name }) => {
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
+
+const Input = ({
+  type,
+  placeholder,
+  className,
+  value,
+  onChange,
+  isPasswordInput,
+  passwordVisible,
+  setPasswordVisible,
+}) => {
   return (
-    <input
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className={`border border-blue-300 focus:outline-none focus:ring-1 focus:ring-blue-400 rounded-md p-2 mb-3 w-full ${className || ""}`}
-    />
+    <div
+      className={`border border-blue-300 focus:outline-none focus:ring-1 focus:ring-blue-400 rounded-md p-2 mb-3 w-full relative ${className || ""}`}
+    >
+      <input
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={`border-0 focus:outline-none w-full`}
+      />
+      {isPasswordInput &&
+        (passwordVisible ? (
+          <FaEye
+            className="absolute right-3 top-1/3 text-gray-600 text-md cursor-pointer"
+            onClick={() => {
+              setPasswordVisible(false);
+            }}
+          />
+        ) : (
+          <FaEyeSlash
+            className="absolute right-3 top-1/3 text-gray-600 text-md cursor-pointer"
+            onClick={() => {
+              setPasswordVisible(true);
+            }}
+          />
+        ))}
+    </div>
   );
 };
 

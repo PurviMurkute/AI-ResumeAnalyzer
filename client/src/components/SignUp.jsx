@@ -12,6 +12,8 @@ const SignUp = ({ isSignUpOpen, setIsSignUpOpen, setIsSignInOpen }) => {
     password: "",
   });
 
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
   const register = useRegister();
 
   const handleSignUp = () => {
@@ -36,7 +38,6 @@ const SignUp = ({ isSignUpOpen, setIsSignUpOpen, setIsSignInOpen }) => {
           type={"text"}
           placeholder={"Full Name"}
           value={formData.fullName}
-          name="fullName"
           onChange={(e) => {
             setFormData({ ...formData, fullName: e.target.value });
           }}
@@ -45,16 +46,17 @@ const SignUp = ({ isSignUpOpen, setIsSignUpOpen, setIsSignInOpen }) => {
           type={"email"}
           placeholder={"Email"}
           value={formData.email}
-          name="email"
           onChange={(e) => {
             setFormData({ ...formData, email: e.target.value });
           }}
         />
         <Input
-          type={"password"}
+          type={`${passwordVisible ? "text" : "password"}`}
           placeholder={"Password"}
           value={formData.password}
-          name="password"
+          isPasswordInput={true}
+          passwordVisible={passwordVisible}
+          setPasswordVisible={setPasswordVisible}
           onChange={(e) => {
             setFormData({ ...formData, password: e.target.value });
           }}
