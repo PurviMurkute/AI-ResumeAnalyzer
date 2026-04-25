@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Header from "../components/Header";
 import homeImage from "../assets/homeImg.png";
 import Button from "../components/Button";
-import Modal from "../components/Modal";
-import Input from "../components/Input";
+import SignIn from "../components/SignIn";
+import SignUp from "../components/SignUp";
 
 const Home = () => {
   const [isSignInOpen, setIsSignInOpen] = useState(false);
@@ -31,7 +31,9 @@ const Home = () => {
               icon={"start"}
               textSize={"text-sm md:text-md"}
               width={"170"}
-              onclick={()=>{setIsSignUpOpen(true)}}
+              onclick={() => {
+                setIsSignUpOpen(true);
+              }}
             />
           </div>
         </div>
@@ -43,71 +45,16 @@ const Home = () => {
           />
         </div>
       </div>
-      <Modal isOpen={isSignInOpen} onClose={() => setIsSignInOpen(false)}>
-        <h2 className="text-2xl font-bold mb-4">Sign In</h2>
-        <div className="border border-blue-300 rounded-md px-5 py-6 md:py-7 flex flex-col gap-4">
-          <Input type={"email"} placeholder={"Email"} />
-          <Input type={"password"} placeholder={"Password"} />
-          <div className="flex justify-center gap-3 items-center w-full mt-2">
-            <Button
-              text={"Cancel"}
-              variant={"tertiary"}
-              width={"flex-1"}
-              onclick={() => setIsSignInOpen(false)}
-            />
-            <Button
-              text={"Sign In"}
-              variant={"primary"}
-              width={"flex-1"}
-            />
-          </div>
-        </div>
-        <div className="text-gray-600 text-sm mt-3">
-          Don't have an account?{" "}
-          <button
-            className="text-blue-500 hover:underline"
-            onClick={() => {
-              setIsSignInOpen(false);
-              setIsSignUpOpen(true);
-            }}
-          >
-            Sign Up
-          </button>
-        </div>
-      </Modal>
-      <Modal isOpen={isSignUpOpen} onClose={() => setIsSignUpOpen(false)}>
-        <h2 className="text-xl md:text-2xl font-bold mb-4">Sign Up</h2>
-        <div className="border border-blue-300 rounded-md px-5 py-6 md:py-7 flex flex-col gap-4">
-          <Input type={"text"} placeholder={"Full Name"} />
-          <Input type={"email"} placeholder={"Email"} />
-          <Input type={"password"} placeholder={"Password"} />
-          <div className="flex justify-center gap-3 items-center w-full mt-2">
-            <Button
-              text={"Cancel"}
-              variant={"tertiary"}
-              width={"flex-1"}
-              onclick={() => setIsSignUpOpen(false)}
-            />
-            <Button
-              text={"Sign Up"}
-              variant={"primary"}
-              width={"flex-1"}
-            />
-          </div>
-        </div>
-        <div className="text-gray-600 text-sm mt-3">
-          Already have an account?{" "}
-          <button
-            className="text-blue-500 hover:underline"
-            onClick={() => {
-              setIsSignInOpen(true);
-              setIsSignUpOpen(false);
-            }}
-          >
-            Sign In
-          </button>
-        </div>
-      </Modal>
+      <SignIn
+        isSignInOpen={isSignInOpen}
+        setIsSignInOpen={setIsSignInOpen}
+        setIsSignUpOpen={setIsSignUpOpen}
+      />
+      <SignUp
+        isSignUpOpen={isSignUpOpen}
+        setIsSignUpOpen={setIsSignUpOpen}
+        setIsSignInOpen={setIsSignInOpen}
+      />
     </div>
   );
 };

@@ -3,11 +3,13 @@ import dotenv from "dotenv";
 import authRouter from "./routes/authRoutes.js";
 import connDB from "./config/dbConnect.js";
 import analyzeResumeRouter from "./routes/resumeRoutes.js";
+import cors from "cors";
 
 dotenv.config();
 
 connDB();
 const app = express();
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

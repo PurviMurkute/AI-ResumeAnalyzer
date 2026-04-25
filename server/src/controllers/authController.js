@@ -22,7 +22,7 @@ const registerUser = async (req, res) => {
       });
     }
 
-    if ( 
+    if (
       !validator.isStrongPassword(password, {
         minLength: 6,
         minLowercase: 1,
@@ -54,15 +54,12 @@ const registerUser = async (req, res) => {
     });
   } catch (error) {
     if (error.name === "ValidationError") {
-      const errors = Object.values(error.errors).map((err) => ({
-        field: err.path,
-        message: err.message,
-      }));
+      const firstError = Object.values(error.errors)[0];
 
       return res.status(400).json({
         success: false,
-        message: error._message,
-        errors,
+        message: firstError.message,
+        field: firstError.path,
       });
     }
   }

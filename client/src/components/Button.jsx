@@ -3,7 +3,7 @@ import { IoMdLogIn } from "react-icons/io";
 import { HiMiniArrowRightStartOnRectangle } from "react-icons/hi2";
 import { MdStart } from "react-icons/md";
 
-const Button = ({ text, textSize, variant, width, onclick, icon }) => {
+const Button = ({ text, textSize, variant, width, onclick, icon, loading }) => {
   const VARIANTS = {
     primary:
       "bg-blue-500 hover:scale-95 text-white font-bold border border-blue-500 py-2 px-4 rounded-md",
@@ -21,10 +21,19 @@ const Button = ({ text, textSize, variant, width, onclick, icon }) => {
 
   return (
     <button
-      className={` ${VARIANTS[variant]} ${width || "w-auto"} ${textSize || "text-sm"} flex justify-center items-center gap-2`}
+      className={` ${VARIANTS[variant]} ${width || "w-auto"} cursor-pointer`}
       onClick={onclick}
+      disabled={loading}
     >
-      {text} {icon && ICONS[icon]}
+      {loading ? (
+        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+      ) : (
+        <div
+          className={`${textSize || "text-sm"} flex justify-center items-center gap-2`}
+        >
+          {text} {icon && ICONS[icon]}
+        </div>
+      )}
     </button>
   );
 };
