@@ -95,11 +95,13 @@ const loginUser = async (req, res) => {
     const token = jwt.sign(
       {
         _id: user._id,
-        role: user.role,
+        email: user.email,
       },
       process.env.JWT_SECRET,
       { expiresIn: "7d" },
     );
+
+    user.password = undefined;
 
     res.status(200).json({
       success: true,

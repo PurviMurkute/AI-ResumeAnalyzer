@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import logo from "../assets/logo.png";
 import Button from "./Button";
 import { RiMenu3Fill } from "react-icons/ri";
+import { AuthContext } from "../context/AuthContext";
 
 const Header = ({ setIsSignInOpen, setIsSignUpOpen }) => {
   const [activeTab, setActiveTab] = useState("home");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, logout } = useContext(AuthContext);
 
   const navItem = (label, key) => (
     <h3
@@ -32,24 +34,36 @@ const Header = ({ setIsSignInOpen, setIsSignUpOpen }) => {
             {navItem("Features", "features")}
             {navItem("How It Works", "how")}
           </div>
-          <Button
-            text="Sign In"
-            variant="secondary"
-            icon={"login"}
-            width={100}
-            onclick={() => {
-              setIsSignInOpen(true);
-            }}
-          />
-          <Button
-            text="Sign Up"
-            variant="primary"
-            icon={"signup"}
-            width={100}
-            onclick={() => {
-              setIsSignUpOpen(true);
-            }}
-          />
+          {!user ? (
+            <div className="flex justify-center items-center gap-5">
+              <Button
+                text="Sign In"
+                variant="secondary"
+                icon={"login"}
+                width={100}
+                onclick={() => {
+                  setIsSignInOpen(true);
+                }}
+              />
+              <Button
+                text="Sign Up"
+                variant="primary"
+                icon={"signup"}
+                width={100}
+                onclick={() => {
+                  setIsSignUpOpen(true);
+                }}
+              />
+            </div>
+          ) : (
+            <Button
+              text="Sign Out"
+              variant="secondary"
+              icon={"signup"}
+              width={100}
+              onclick={logout}
+            />
+          )}
         </div>
         <div className="md:hidden">
           <RiMenu3Fill

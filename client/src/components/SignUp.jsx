@@ -3,7 +3,7 @@ import Modal from "./Modal";
 import Input from "./Input";
 import Button from "./Button";
 import { useRegister } from "../api/auth.mutations";
-import { Toaster } from "react-hot-toast";
+// toasts are handled globally from mutation hooks; no local import needed
 
 const SignUp = ({ isSignUpOpen, setIsSignUpOpen, setIsSignInOpen }) => {
   const [formData, setFormData] = useState({
@@ -14,7 +14,7 @@ const SignUp = ({ isSignUpOpen, setIsSignUpOpen, setIsSignInOpen }) => {
 
   const [passwordVisible, setPasswordVisible] = useState(false);
 
-  const register = useRegister();
+  const register = useRegister(setIsSignUpOpen);
 
   const handleSignUp = () => {
     const userData = {
@@ -76,7 +76,7 @@ const SignUp = ({ isSignUpOpen, setIsSignUpOpen, setIsSignInOpen }) => {
           />
         </div>
       </form>
-      <Toaster />
+      {/* <Toaster /> */}
       <div className="text-gray-600 text-sm mt-3">
         Already have an account?{" "}
         <button

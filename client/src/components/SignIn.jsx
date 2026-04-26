@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Input from "./Input";
 import Modal from "./Modal";
 import Button from "./Button";
+import { useLogin } from "../api/auth.mutations";
 
 const SignIn = ({ isSignInOpen, setIsSignInOpen, setIsSignUpOpen }) => {
   const [signInFormData, setSignInFormData] = useState({
@@ -9,11 +10,34 @@ const SignIn = ({ isSignInOpen, setIsSignInOpen, setIsSignUpOpen }) => {
     password: "",
   });
 
+  const handleOnClose = () => {
+    setIsSignInOpen(false);
+    setSignInFormData({
+      email: "",
+      password: "",
+    });
+  };
+
+  const login = useLogin(setIsSignInOpen, setSignInFormData);
+
+  const handleSignIn = () => {
+    const userData = {
+      email: signInFormData.email,
+      password: signInFormData.password,
+    };
+    login.mutate(userData);
+  };
+
   const [passVisible, setPassVisible] = useState(false);
   return (
-    <Modal isOpen={isSignInOpen} onClose={() => setIsSignInOpen(false)}>
+    <Modal isOpen={isSignInOpen} onClose={handleOnClose}>
       <h2 className="text-2xl font-bold mb-4">Sign In</h2>
-      <div className="border border-blue-300 rounded-md px-5 py-6 md:py-7 flex flex-col gap-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+        className="border border-blue-300 rounded-md px-5 py-6 md:py-7 flex flex-col gap-4"
+      >
         <Input
           type={"email"}
           placeholder={"Email"}
@@ -40,9 +64,14 @@ const SignIn = ({ isSignInOpen, setIsSignInOpen, setIsSignUpOpen }) => {
             width={"flex-1"}
             onclick={() => setIsSignInOpen(false)}
           />
-          <Button text={"Sign In"} variant={"primary"} width={"flex-1"} />
+          <Button
+            text={"Sign In"}
+            variant={"primary"}
+            width={"flex-1"}
+            onclick={handleSignIn}
+          />
         </div>
-      </div>
+      </form>
       <div className="text-gray-600 text-sm mt-3">
         Don't have an account?{" "}
         <button
