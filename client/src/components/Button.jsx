@@ -2,6 +2,7 @@ import React from "react";
 import { IoMdLogIn } from "react-icons/io";
 import { HiMiniArrowRightStartOnRectangle } from "react-icons/hi2";
 import { MdStart } from "react-icons/md";
+import { IoCloudUpload } from "react-icons/io5";
 
 const Button = ({ text, textSize, variant, width, onclick, icon, loading }) => {
   const VARIANTS = {
@@ -17,6 +18,7 @@ const Button = ({ text, textSize, variant, width, onclick, icon, loading }) => {
     login: <IoMdLogIn className="text-xl" />,
     signup: <HiMiniArrowRightStartOnRectangle className="text-xl" />,
     start: <MdStart className="text-2xl font-extrabold" />,
+    upload: <IoCloudUpload className="text-xl" />,
   };
 
   return (
@@ -25,15 +27,17 @@ const Button = ({ text, textSize, variant, width, onclick, icon, loading }) => {
       onClick={onclick}
       disabled={loading}
     >
-      {loading ? (
-        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-      ) : (
-        <div
-          className={`${textSize || "text-sm"} flex justify-center items-center gap-2`}
-        >
-          {text} {icon && ICONS[icon]}
-        </div>
-      )}
+      <div
+        className={`${textSize || "text-sm"} flex justify-center items-center gap-2`}
+      >
+        {loading ? (
+          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+        ) : (
+          <>
+            {text} {icon && ICONS[icon]}
+          </>
+        )}
+      </div>
     </button>
   );
 };

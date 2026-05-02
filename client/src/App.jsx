@@ -1,6 +1,8 @@
 import { Route, Routes } from "react-router";
 import Home from "./views/Home";
 import { Toaster } from "react-hot-toast";
+import Dashboard from "./views/Dashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (
@@ -8,6 +10,14 @@ const App = () => {
       <Toaster />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );

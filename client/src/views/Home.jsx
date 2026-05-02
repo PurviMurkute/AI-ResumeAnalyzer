@@ -1,13 +1,19 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Header from "../components/Header";
 import homeImage from "../assets/homeImg.png";
 import Button from "../components/Button";
 import SignIn from "../components/SignIn";
 import SignUp from "../components/SignUp";
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router";
+import UploadResume from "../components/UploadResume";
 
 const Home = () => {
   const [isSignInOpen, setIsSignInOpen] = useState(false);
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   return (
     <div className="bg-white min-h-screen flex flex-col justify-center items-center align-middle">
@@ -25,16 +31,32 @@ const Home = () => {
             match instantly
           </h4>
           <div className="mt-6">
-            <Button
-              text="Get Started"
-              variant={"primary"}
-              icon={"start"}
-              textSize={"text-sm md:text-md"}
-              width={"170"}
-              onclick={() => {
-                setIsSignUpOpen(true);
-              }}
-            />
+            {!user ? (
+              <Button
+                text="Get Started"
+                variant={"primary"}
+                icon={"start"}
+                textSize={"text-sm md:text-md"}
+                width={"170"}
+                onclick={() => {
+                  if (!user) {
+                    setIsSignUpOpen(true);
+                  } else {
+                    navigate("/dashboard");
+                  }
+                }}
+              />
+            ) : (
+              <Button
+                text="Upload Resume"
+                variant="primary"
+                icon="upload"
+                textSize={"text-sm md:text-md"}
+                onclick={() => {
+                  setIsUploadModalOpen(true);
+                }}
+              />
+            )}
           </div>
         </div>
         <div className=" bg-blue-50 rounded-full shadow p-6 md:mt-10">
@@ -54,6 +76,10 @@ const Home = () => {
         isSignUpOpen={isSignUpOpen}
         setIsSignUpOpen={setIsSignUpOpen}
         setIsSignInOpen={setIsSignInOpen}
+      />
+      <UploadResume
+        isUploadModalOpen={isUploadModalOpen}
+        setIsUploadModalOpen={setIsUploadModalOpen}
       />
     </div>
   );
