@@ -14,8 +14,10 @@ const fileUploadOnCloudinary = async (filePath) => {
     if (!filePath) return null;
 
     const result = await cloudinary.uploader.upload(filePath, {
-      resource_type: "raw", // important for PDF
+      resource_type: "raw",
       folder: "resumes",
+      type: "upload",
+      access_mode: "public",
     });
 
     return result.secure_url;

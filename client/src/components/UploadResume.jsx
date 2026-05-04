@@ -3,6 +3,7 @@ import Modal from "./Modal";
 import Input from "./Input";
 import Button from "./Button";
 import { useAnalyseResume } from "../api/resumeAnalyse.mutations";
+import { useNavigate } from "react-router";
 
 const UploadResume = ({ isUploadModalOpen, setIsUploadModalOpen }) => {
   const [file, setFile] = useState(null);
@@ -13,6 +14,8 @@ const UploadResume = ({ isUploadModalOpen, setIsUploadModalOpen }) => {
   const handleAnalyze = () => {
     analyzeResume({ file, jobDescription });
   };
+
+  const navigate = useNavigate();
 
   return (
     <Modal
@@ -33,7 +36,7 @@ const UploadResume = ({ isUploadModalOpen, setIsUploadModalOpen }) => {
         />
         <Input
           type={"textarea"}
-          placeholder={"Job Description"}
+          placeholder={"Job Description (Optional)"}
           value={jobDescription}
           onChange={(e) => setJobDescription(e.target.value)}
         />
@@ -48,9 +51,13 @@ const UploadResume = ({ isUploadModalOpen, setIsUploadModalOpen }) => {
             text={"Analyze"}
             variant={"primary"}
             width={"flex-1"}
-            onclick={handleAnalyze}
             disabled={!file || isAnalyzeLoading}
             loading={isAnalyzeLoading}
+            onclick={() => {
+  navigate("/dashboard", {
+    state: { isAnalyzing: true, file, jobDescription },
+  });
+}}
           />
         </div>
       </form>

@@ -3,11 +3,17 @@ import logo from "../assets/logo.png";
 import Button from "./Button";
 import { RiMenu3Fill } from "react-icons/ri";
 import { AuthContext } from "../context/AuthContext";
+import { useLocation, useNavigate } from "react-router";
 
 const Header = ({ setIsSignInOpen, setIsSignUpOpen }) => {
   const [activeTab, setActiveTab] = useState("home");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, logout } = useContext(AuthContext);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const isDashboard = location.pathname === "/dashboard";
 
   const navItem = (label, key) => (
     <h3
@@ -29,11 +35,23 @@ const Header = ({ setIsSignInOpen, setIsSignUpOpen }) => {
           </h1>
         </div>
         <div className="hidden md:flex justify-center items-center gap-6">
-          <div className="flex gap-6">
-            {navItem("Home", "home")}
-            {navItem("Features", "features")}
-            {navItem("How It Works", "how")}
-          </div>
+          {!isDashboard ? (
+            <div className="flex gap-6">
+              {navItem("Home", "home")}
+              {navItem("Features", "features")}
+              {navItem("How It Works", "how")}
+            </div>
+          ) : (
+            <Button
+              text="Upload New Resume"
+              variant="tertiary"
+              icon="upload"
+              onclick={() => {
+                navigate("/");
+              }}
+            />
+          )}
+
           {!user ? (
             <div className="flex justify-center items-center gap-5">
               <Button

@@ -47,6 +47,8 @@ const Home = () => {
                 }}
               />
             ) : (
+              <div className="flex justify-items-start items-center gap-4">
+
               <Button
                 text="Upload Resume"
                 variant="primary"
@@ -56,6 +58,16 @@ const Home = () => {
                   setIsUploadModalOpen(true);
                 }}
               />
+              <Button
+                text="Go to Dashboard"
+                variant={"secondary"}
+                icon={"start"}
+                textSize={"text-sm md:text-md"}
+                onclick={() => {
+                    navigate("/dashboard");
+                }}
+              />
+              </div>
             )}
           </div>
         </div>

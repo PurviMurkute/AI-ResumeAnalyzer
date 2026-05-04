@@ -15,7 +15,7 @@ export const useAnalyseResume = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            "Authorization": `Bearer ${localStorage.getItem("JWT")}`,
+            Authorization: `Bearer ${localStorage.getItem("JWT")}`,
           },
         },
       );
@@ -24,7 +24,6 @@ export const useAnalyseResume = () => {
     },
 
     onSuccess: (response) => {
-      console.log("Resume analysis successful");
       toast.success(response.message || "Resume analysis successful");
     },
 

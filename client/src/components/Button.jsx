@@ -17,7 +17,7 @@ const Button = ({ text, textSize, variant, width, onclick, icon, loading }) => {
   const ICONS = {
     login: <IoMdLogIn className="text-xl" />,
     signup: <HiMiniArrowRightStartOnRectangle className="text-xl" />,
-    start: <MdStart className="text-2xl font-extrabold" />,
+    start: <MdStart className="text-xl font-extrabold" />,
     upload: <IoCloudUpload className="text-xl" />,
   };
 
