@@ -2,18 +2,11 @@ import React, { useState } from "react";
 import Modal from "./Modal";
 import Input from "./Input";
 import Button from "./Button";
-import { useAnalyseResume } from "../api/resumeAnalyse.mutations";
 import { useNavigate } from "react-router";
 
 const UploadResume = ({ isUploadModalOpen, setIsUploadModalOpen }) => {
   const [file, setFile] = useState(null);
   const [jobDescription, setJobDescription] = useState("");
-
-  const {mutate: analyzeResume, isPending: isAnalyzeLoading} = useAnalyseResume();
-
-  const handleAnalyze = () => {
-    analyzeResume({ file, jobDescription });
-  };
 
   const navigate = useNavigate();
 
@@ -51,13 +44,11 @@ const UploadResume = ({ isUploadModalOpen, setIsUploadModalOpen }) => {
             text={"Analyze"}
             variant={"primary"}
             width={"flex-1"}
-            disabled={!file || isAnalyzeLoading}
-            loading={isAnalyzeLoading}
             onclick={() => {
-  navigate("/dashboard", {
-    state: { isAnalyzing: true, file, jobDescription },
-  });
-}}
+              navigate("/dashboard", {
+                state: { isAnalyzing: true, file, jobDescription },
+              });
+            }}
           />
         </div>
       </form>

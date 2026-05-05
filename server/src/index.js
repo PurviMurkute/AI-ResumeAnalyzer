@@ -4,6 +4,7 @@ import authRouter from "./routes/authRoutes.js";
 import connDB from "./config/dbConnect.js";
 import analyzeResumeRouter from "./routes/resumeRoutes.js";
 import cors from "cors";
+import passport from './config/passport.js';
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
 
 const PORT = process.env.PORT || 5001;
 

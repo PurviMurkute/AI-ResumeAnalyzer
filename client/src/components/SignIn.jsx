@@ -71,6 +71,22 @@ const SignIn = ({ isSignInOpen, setIsSignInOpen, setIsSignUpOpen }) => {
             onclick={handleSignIn}
           />
         </div>
+        <div className="flex items-center w-[90%] mx-auto my-2">
+          <div className="h-[0.5px] flex-1 bg-gray-500" />
+          <span className="mx-3 text-sm text-gray-500">OR</span>
+          <div className="h-[0.5px] flex-1 bg-gray-500" />
+        </div>
+        <Button
+          text={"Sign in with Google"}
+          variant={"secondary"}
+          icon={"google"}
+          onclick={() => {
+            window.open(
+              `${import.meta.env.VITE_SERVER_URL}/auth/google`,
+              "_self",
+            );
+          }}
+        />
       </form>
       <div className="text-gray-600 text-sm mt-3">
         Don't have an account?{" "}

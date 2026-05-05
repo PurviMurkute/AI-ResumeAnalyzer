@@ -3,6 +3,7 @@ import Home from "./views/Home";
 import { Toaster } from "react-hot-toast";
 import Dashboard from "./views/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import GoogleLogin from "./components/GoogleLogin";
 
 const App = () => {
   return (
@@ -10,6 +11,7 @@ const App = () => {
       <Toaster />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path='/google-success' element={<GoogleLogin />} />
         <Route
           path="/dashboard"
           element={

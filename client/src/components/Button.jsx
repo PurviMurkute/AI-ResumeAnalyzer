@@ -3,6 +3,7 @@ import { IoMdLogIn } from "react-icons/io";
 import { HiMiniArrowRightStartOnRectangle } from "react-icons/hi2";
 import { MdStart } from "react-icons/md";
 import { IoCloudUpload } from "react-icons/io5";
+import { FcGoogle } from "react-icons/fc";
 
 const Button = ({ text, textSize, variant, width, onclick, icon, loading }) => {
   const VARIANTS = {
@@ -19,6 +20,7 @@ const Button = ({ text, textSize, variant, width, onclick, icon, loading }) => {
     signup: <HiMiniArrowRightStartOnRectangle className="text-xl" />,
     start: <MdStart className="text-xl font-extrabold" />,
     upload: <IoCloudUpload className="text-xl" />,
+    google: <FcGoogle className="text-xl" />,
   };
 
   return (

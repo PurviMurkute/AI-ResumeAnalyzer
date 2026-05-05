@@ -65,34 +65,25 @@ const registerUser = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+const loginUser = async (req, res, next) => {
+  passport.authenticate("local", { session: false }, (error, user, info) => {
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        data: null,
+        message: error?.message,
+      });
+    }
 
-  if (!email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: "Email and password are required",
-    });
-  }
-
-  try {
-    const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found with email " + email,
+        data: null,
+        message: info?.message,
       });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid credentials",
-      });
-    }
-
-    const token = jwt.sign(
+    const jwtToken = jwt.sign(
       {
         _id: user._id,
         email: user.email,
@@ -103,19 +94,39 @@ const loginUser = async (req, res) => {
 
     user.password = undefined;
 
-    res.status(200).json({
+    return res.status(201).json({
       success: true,
       data: user,
-      token,
-      message: "Login successful",
+      jwtToken,
+      message: "Login Successfull",
+    });
+  })(req, res, next);
+};
+
+const getCurrentUser = (req, res) => {
+  try {
+    let user = req.user;
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        data: null,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: user,
+      message: "User fetched successfully",
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Login failed",
-      error: error.message,
+      data: null,
+      message: error.message,
     });
   }
 };
 
-export { registerUser, loginUser };
+export { registerUser, loginUser, getCurrentUser };
