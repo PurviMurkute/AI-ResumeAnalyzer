@@ -2,6 +2,7 @@ import validator from "validator";
 import User from "../models/authModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import passport from "passport";
 
 const registerUser = async (req, res) => {
   const { username, email, password } = req.body;

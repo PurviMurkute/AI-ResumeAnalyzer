@@ -4,6 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 import fs from "fs";
 import fileUploadOnCloudinary from "../utils/cloudinary.js";
+import { v2 as cloudinary } from "cloudinary";
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ const generateWithRetry = async (prompt, retries = 3) => {
 
 const analyzeResume = async (req, res) => {
   const { jobDescription } = req.body;
+  const userId = req.user._id;
   try {
     const file = req.file;
 
@@ -123,6 +125,7 @@ ${resumeText}
       jobDescription: jobDescription,
       analysisResult: parsed,
       score: parsed.ats_score,
+      userId,
     });
 
     await analyzeResumeDoc.save();
@@ -149,4 +152,80 @@ ${resumeText}
   }
 };
 
-export { analyzeResume };
+const getAllAnalysesHistoryByUser = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const analyses = await AnalyzeResume.find({ userId });
+
+    if (!analyses.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No analyses found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      data: analyses,
+      count: analyses.length,
+    });
+  } catch (error) {
+    console.error("Error:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const getPublicIdFromUrl = (url) => {
+  const parts = url.split("/");
+  const fileWithExtension = parts.slice(-1)[0];
+  const folder = parts.slice(-2, -1)[0];
+
+  const publicId = `${folder}/${fileWithExtension.split(".")[0]}`;
+  return publicId;
+};
+
+const deleteAnalysis = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user._id;
+  try {
+    const Analysis = await AnalyzeResume.findById({
+      _id: id,
+      userId,
+    });
+    console.log(Analysis);
+
+    if (!Analysis) {
+      return res.status(404).json({
+        success: false,
+        message: "Analysis not found",
+      });
+    }
+
+    // ✅ Extract public_id
+    const publicId = getPublicIdFromUrl(Analysis.resume);
+
+    // ✅ Delete from Cloudinary
+    await cloudinary.uploader.destroy(publicId, {
+      resource_type: "raw",
+    });
+
+    // ✅ Delete from DB
+    await AnalyzeResume.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Analysis deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+      Analysis,
+    });
+  }
+};
+
+export { analyzeResume, getAllAnalysesHistoryByUser, deleteAnalysis };
