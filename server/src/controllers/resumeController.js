@@ -5,8 +5,11 @@ import dotenv from "dotenv";
 import fs from "fs";
 import fileUploadOnCloudinary from "../utils/cloudinary.js";
 import { v2 as cloudinary } from "cloudinary";
+import { createCache, getCache, flushCache } from "../utils/cache.js";
 
 dotenv.config();
+
+const getUserResumeAnalysisCacheKey = (userId) => `Analysis:${userId}`;
 
 const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
@@ -130,6 +133,13 @@ ${resumeText}
 
     await analyzeResumeDoc.save();
 
+    // Flush cache for this users analyses
+    flushCache(getUserResumeAnalysisCacheKey(userId));
+    console.log(
+      "Cache flushed for key:",
+      getUserResumeAnalysisCacheKey(userId),
+    );
+
     return res.status(200).json({
       success: true,
       message: "Resume analyzed successfully",
@@ -155,7 +165,23 @@ ${resumeText}
 const getAllAnalysesHistoryByUser = async (req, res) => {
   try {
     const userId = req.user._id;
-    const analyses = await AnalyzeResume.find({ userId });
+    const analyses = [];
+
+    const analysisFromRedis = await getCache(
+      getUserResumeAnalysisCacheKey(userId),
+    );
+    if (analysisFromRedis) {
+      analyses = analysisFromRedis;
+    } else {
+      analyses = await AnalyzeResume.find({ userId }).sort({
+        createdAt: -1,
+      });
+      await createCache(getUserResumeAnalysisCacheKey(userId), analyses);
+      console.log(
+        "Cache created for key:",
+        getUserResumeAnalysisCacheKey(userId),
+      );
+    }
 
     if (!analyses.length) {
       return res.status(404).json({
@@ -213,6 +239,13 @@ const deleteAnalysis = async (req, res) => {
 
     // ✅ Delete from DB
     await AnalyzeResume.findByIdAndDelete(id);
+
+    // Flush cache for this user's analyses
+    flushCache(getUserResumeAnalysisCacheKey(userId));
+    console.log(
+      "Cache flushed for key:",
+      getUserResumeAnalysisCacheKey(userId),
+    );
 
     return res.status(200).json({
       success: true,
