@@ -12,7 +12,12 @@ dotenv.config();
 const getUserResumeAnalysisCacheKey = (userId) => `Analysis:${userId}`;
 
 const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
+const model = ai.getGenerativeModel({
+  model: "gemini-2.5-flash",
+  generationConfig: {
+    temperature: 0.2,
+  },
+});
 
 // retry logic
 const generateWithRetry = async (prompt, retries = 3) => {
@@ -61,45 +66,68 @@ const analyzeResume = async (req, res) => {
 
     // Prompt
     const prompt = `
-You are an ATS (Applicant Tracking System) used by recruiters.
+You are a professional ATS (Applicant Tracking System) and technical recruiter.
 
-Task:
-Analyze the resume based on the most relevant role inferred from the resume content.
+Your task is to evaluate the resume objectively and consistently.
+
+Scoring Criteria:
+- Skills relevance
+- Technical stack depth
+- Project quality
+- Experience relevance
+- Resume clarity
+- ATS keyword optimization
+- Impact and achievements
+
+Important:
+- Be strict but fair
+- Keep scoring consistent for the same resume
+- Avoid random scoring changes
+- Focus on technical evaluation only
 
 ${
   jobDescription
-    ? "Also compare the resume with the job description and identify missing important keywords."
-    : "Also extract important keywords from the resume."
+    ? `
+Compare the resume against the provided job description.
+Identify missing important technical keywords and skill gaps.
+`
+    : `
+Infer the most suitable role from the resume itself.
+Extract the strongest technical keywords from the resume.
+`
 }
 
-Return ONLY valid JSON in this format:
+Return ONLY valid JSON.
 
 ${
   jobDescription
     ? `{
-  "ats_score": number (0-10),
+  "ats_score": number,
   "score_type": "job_match",
-  "suggestions": ["max 3 short actionable points"],
-  "strengths": ["max 3 short points"],
-  "weaknesses": ["max 3 short points"],
-  "missing_keywords": ["max 5 important technical keywords"]
+  "suggestions": ["max 3 concise actionable improvements"],
+  "strengths": ["max 3 concise strengths"],
+  "weaknesses": ["max 3 concise weaknesses"],
+  "missing_keywords": ["max 5 technical keywords"]
 }`
     : `{
-  "ats_score": number (0-10),
+  "ats_score": number,
   "score_type": "general",
-  "suggestions": ["max 3 short actionable points"],
-  "strengths": ["max 3 short points"],
-  "weaknesses": ["max 3 short points"],
-  "extracted_keywords": ["max 5 important technical keywords"]
+  "suggestions": ["max 3 concise actionable improvements"],
+  "strengths": ["max 3 concise strengths"],
+  "weaknesses": ["max 3 concise weaknesses"],
+  "extracted_keywords": ["max 5 technical keywords"]
 }`
 }
 
 Rules:
-- ats_score must be an integer between 0 and 10
-- suggestions must be short (1 line each)
-- strengths & weaknesses must be concise
-- keywords must be technical skills/tools only
-- no extra text, no explanation
+- ATS score must be integer from 0-10
+- Suggestions must be short and actionable
+- Avoid generic advice
+- Keywords must contain only technologies, tools, frameworks, or skills
+- No markdown
+- No explanation
+- No extra text
+- Output raw JSON only
 
 ${jobDescription ? `Job Description:\n${jobDescription}` : ""}
 

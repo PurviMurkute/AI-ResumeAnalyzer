@@ -31,7 +31,7 @@ const SignUp = ({ isSignUpOpen, setIsSignUpOpen, setIsSignInOpen }) => {
         onSubmit={(e) => {
           e.preventDefault();
         }}
-        className="border border-blue-300 rounded-md px-5 py-6 md:py-7 flex flex-col"
+        className="border border-blue-300 rounded-md px-5 py-6 md:py-7 flex flex-col gap-2"
       >
         <Input
           type={"text"}

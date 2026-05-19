@@ -4,6 +4,7 @@ import Button from "./Button";
 import { RiMenu3Fill } from "react-icons/ri";
 import { AuthContext } from "../context/AuthContext";
 import { useLocation, useNavigate } from "react-router";
+import { Link } from "react-scroll";
 
 const Header = ({ setIsSignInOpen, setIsSignUpOpen }) => {
   const [activeTab, setActiveTab] = useState("home");
@@ -37,9 +38,30 @@ const Header = ({ setIsSignInOpen, setIsSignUpOpen }) => {
         <div className="hidden md:flex justify-center items-center gap-6">
           {!isDashboard ? (
             <div className="flex gap-6">
-              {navItem("Home", "home")}
-              {navItem("Features", "features")}
-              {navItem("How It Works", "how")}
+              <Link
+                to="home"
+                smooth={true}
+                duration={200}
+                className="cursor-pointer"
+              >
+                {navItem("Home", "home")}
+              </Link>
+              <Link
+                to="features"
+                smooth={true}
+                duration={200}
+                className="cursor-pointer"
+              >
+                {navItem("Features", "features")}
+              </Link>
+              <Link
+                to="how-it-works"
+                smooth={true}
+                duration={200}
+                className="cursor-pointer"
+              >
+                {navItem("How It Works", "how")}
+              </Link>
             </div>
           ) : (
             <Button
