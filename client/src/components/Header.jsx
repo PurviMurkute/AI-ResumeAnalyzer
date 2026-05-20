@@ -9,6 +9,7 @@ import { Link } from "react-scroll";
 const Header = ({ setIsSignInOpen, setIsSignUpOpen }) => {
   const [activeTab, setActiveTab] = useState("home");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const { user, logout } = useContext(AuthContext);
 
   const location = useLocation();
@@ -19,100 +20,105 @@ const Header = ({ setIsSignInOpen, setIsSignUpOpen }) => {
   const navItem = (label, key) => (
     <h3
       onClick={() => setActiveTab(key)}
-      className={`cursor-pointer pb-1 transition-all duration-200 
-        ${activeTab === key ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-800"}
-      `}
+      className={`relative cursor-pointer text-[15px] font-medium transition-all duration-300
+      ${
+        activeTab === key
+          ? "text-cyan-600"
+          : "text-gray-600 hover:text-gray-900"
+      }`}
     >
       {label}
+
+      <span
+        className={`absolute left-0 -bottom-1 h-[2px] rounded-full bg-cyan-500 transition-all duration-300
+        ${activeTab === key ? "w-full" : "w-0"}`}
+      ></span>
     </h3>
   );
-  return (
-    <div className="flex justify-center items-center">
-      <div className="fixed top-0 mt-3 px-5 md:py-1 w-full md:w-[75%] h-[50px] bg-white flex justify-between items-center">
-        <div className="flex justify-start items-center gap-2">
-          <img src={logo} alt="logo" className="w-[45px] md:w-[45px] inline" />
-          <h1 className="text-2xl font-bold font-serif bg-clip-text text-transparent bg-linear-to-r from-indigo-500 via-blue-500 to-sky-500">
-            HireLens
-          </h1>
-        </div>
-        <div className="hidden md:flex justify-center items-center gap-6">
-          {!isDashboard ? (
-            <div className="flex gap-6">
-              <Link
-                to="home"
-                smooth={true}
-                duration={200}
-                className="cursor-pointer"
-              >
-                {navItem("Home", "home")}
-              </Link>
-              <Link
-                to="features"
-                smooth={true}
-                duration={200}
-                className="cursor-pointer"
-              >
-                {navItem("Features", "features")}
-              </Link>
-              <Link
-                to="how-it-works"
-                smooth={true}
-                duration={200}
-                className="cursor-pointer"
-              >
-                {navItem("How It Works", "how")}
-              </Link>
-            </div>
-          ) : (
-            <Button
-              text="Upload New Resume"
-              variant="tertiary"
-              icon="upload"
-              onclick={() => {
-                navigate("/");
-              }}
-            />
-          )}
 
-          {!user ? (
-            <div className="flex justify-center items-center gap-5">
-              <Button
-                text="Sign In"
-                variant="secondary"
-                icon={"login"}
-                width={100}
-                onclick={() => {
-                  setIsSignInOpen(true);
-                }}
-              />
-              <Button
-                text="Sign Up"
-                variant="primary"
-                icon={"signup"}
-                width={100}
-                onclick={() => {
-                  setIsSignUpOpen(true);
-                }}
-              />
+  return (
+    <header className="fixed top-0 left-0 w-full z-50 flex justify-center px-4 pt-4">
+      <div className="w-full md:w-[75%] h-[50px]">
+        <div className="backdrop-blur-xl bg-white/80 border border-gray-200 shadow-[0_8px_30px_rgba(0,0,0,0.06)] rounded-2xl px-5 md:px-7 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-3 cursor-pointer">
+            <img src={logo} alt="logo" className="w-[32px] md:w-[38px]" />
+
+            <div>
+              <h1 className="text-[24px] font-black tracking-tight bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+                HireLens
+              </h1>
             </div>
-          ) : (
-            <Button
-              text="Sign Out"
-              variant="secondary"
-              icon={"signup"}
-              width={100}
-              onclick={logout}
-            />
-          )}
-        </div>
-        <div className="md:hidden">
-          <RiMenu3Fill
-            className="w-[25px] h-[25px] text-gray-800 cursor-pointer"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          />
+          </div>
+
+          <div className="hidden md:flex items-center gap-8">
+            {!isDashboard ? (
+              <div className="flex items-center gap-8">
+                <Link to="home" smooth duration={200}>
+                  {navItem("Home", "home")}
+                </Link>
+
+                <Link to="features" smooth duration={200}>
+                  {navItem("Features", "features")}
+                </Link>
+
+                <Link to="how-it-works" smooth duration={200}>
+                  {navItem("How It Works", "how")}
+                </Link>
+              </div>
+            ) : (
+              <Button
+                text="Upload Resume"
+                variant="tertiary"
+                icon="upload"
+                onclick={() => {
+                  navigate("/");
+                }}
+              />
+            )}
+          </div>
+
+          <div className="hidden md:flex items-center gap-3">
+            {!user ? (
+              <>
+                <Button
+                  text="Sign In"
+                  variant="tertiary"
+                  icon="login"
+                  onclick={() => {
+                    setIsSignInOpen(true);
+                  }}
+                />
+
+                <Button
+                  text="Get Started"
+                  variant="primary"
+                  icon="signup"
+                  onclick={() => {
+                    setIsSignUpOpen(true);
+                  }}
+                />
+              </>
+            ) : (
+              <Button
+                text="Sign Out"
+                variant="secondary"
+                icon="signup"
+                onclick={logout}
+              />
+            )}
+          </div>
+
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="h-11 w-11 rounded-xl border border-gray-200 bg-white flex items-center justify-center"
+            >
+              <RiMenu3Fill className="text-[22px] text-gray-700" />
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 
