@@ -1,9 +1,8 @@
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useRef, useContext } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { LuLoaderCircle } from "react-icons/lu";
-import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 const GoogleLogin = () => {
@@ -11,45 +10,59 @@ const GoogleLogin = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleAuth = async () => {
-      const params = new URLSearchParams(window.location.search);
-      const token = params.get("token");
+  const hasFetched = useRef(false);
 
-      if (token) {
+  useEffect(() => {
+    if (hasFetched.current) return;
+
+    hasFetched.current = true;
+
+    const handleAuth = async () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+
+        const token = params.get("token");
+
+        if (!token) {
+          navigate("/");
+          return;
+        }
+
         localStorage.setItem("JWT", token);
 
-        try {
-          const res = await axios.get(
-            `${import.meta.env.VITE_SERVER_URL}/auth/current-user`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          if (res.data.success) {
-            login(res.data.data, token);
-            setTimeout(() => {
-              navigate("/dashboard");
-            }, 2000);
+        const res = await axios.get(
+          `${import.meta.env.VITE_SERVER_URL}/auth/current-user`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        } catch (error) {
-          console.log("error in googlesuccess", error);
+        );
 
-          toast.error(error?.message);
+        if (res.data.success) {
+          login(res.data.data, token);
+
+          navigate("/dashboard");
         }
+      } catch (error) {
+        console.log("Google login error:", error);
+
+        toast.error("Authentication failed");
+
+        navigate("/");
       }
     };
 
     handleAuth();
-  }, [navigate, login]);
+  }, []);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center h-screen space-y-4">
-  <LuLoaderCircle className="w-8 h-8 animate-spin"/>
-  <p className="font-medium">Logging you in...</p>
+    <div className="min-h-screen flex flex-col justify-center items-center gap-4">
+      <LuLoaderCircle className="w-8 h-8 animate-spin text-cyan-600" />
+
+      <p className="font-medium text-gray-700">
+        Logging you in...
+      </p>
     </div>
   );
 };
